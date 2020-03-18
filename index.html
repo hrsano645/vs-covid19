@@ -100,7 +100,7 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 有無: "有"
 */
 // <ruby>${d['http://xmlns.com/foaf/0.1/#name']}<rt>${d['name_yomi']}</rt></ruby>
-			div.innerHTML = `
+			div.innerHTML = setHyperLink(`
 				<h2>${d['サービス名称']}</h2>
 				<div class=description>${d['詳細']}</div>
 				<div class=from>提供: ${d['企業等']}</div>
@@ -113,10 +113,9 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 				<div class=service>${d['サービス分類']}</div>
 				<div class=keyword>${d['キーワード']}</div>
 				<div class=target>${d['対象者']}</div>
-				</div>
+				</div>`) + 
+				`<div class=url><a href="${d['URL']}">アクセスしてみる</a></div>`;
 
-				<div class=url><a href=${d['URL']}>アクセスしてみる</a></div>
-			`
 			const SET = { '.type': '分野', '.service': 'サービス分類', '.keyword': 'キーワード', '.target': "対象者" }
 			for (const s in SET) {
 				const sname = SET[s]
@@ -271,6 +270,15 @@ const shuffle = function(array) {
 		array[n] = tmp
 	}
 }
+
+const setHyperLink = function(str) {
+	var reg = /((h?)(ttps?:\/\/[a-zA-Z0-9.\-_@:/~?%&;=+#',()*!]+))/g; // ']))/;
+    var regexpMakeLink = function(all, url, h, href) {
+        return '<a href="h' + href + '">' + url + '</a>';
+    }
+    return str.replace(reg, regexpMakeLink);
+}
+
 </script>
 <style>
 body {

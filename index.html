@@ -274,7 +274,7 @@ const shuffle = function(array) {
 const setHyperLink = function(str) {
 	var reg = /((h?)(ttps?:\/\/[a-zA-Z0-9.\-_@:/~?%&;=+#',()*!]+))/g; // ']))/;
     var regexpMakeLink = function(all, url, h, href) {
-        return '<a href="h' + href + '">' + url + '</a>';
+        return '<span class="url_string"><a href="h' + href + '">' + url + '</a></span>';
     }
     return str.replace(reg, regexpMakeLink);
 }
@@ -351,6 +351,8 @@ h2 {
 	padding: 1em;
 	margin: 1em;
 	line-height: 1.8em;
+}
+.url_string {
 	word-break: break-all;
 }
 .url {

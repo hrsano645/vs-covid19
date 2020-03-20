@@ -35,13 +35,13 @@ window.onload = async function() {
 				tags.push(tag)
 			}
 		}
-		//キーワードをカンマ区切りで分割してタグにセット
-		const keywordElements = d['キーワード'].replace(/、/g, ',').split(',')
-		for (const ke of keywordElements) {
-			if (tags.indexOf(ke) == -1) {
-				tags.push(ke)
-			}
-		}
+		//キーワードをカンマ区切りで分割してタグにセット まだ試行のためコメントアウト
+		//const keywordElements = d['キーワード'].replace(/、/g, ',').split(',')
+		//for (const ke of keywordElements) {
+		//	if (tags.indexOf(ke) == -1) {
+		//		tags.push(ke)
+		//	}
+		//}
 	}
 	tags.sort()
 	for (const tag of tags) {
@@ -134,7 +134,7 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 			}
 			main.appendChild(div)
 		}
-		total.textContent = cnt + "件表示しています。"
+		total.textContent = cnt + "件表示しています。" //[issue#20]件数の表示を改善して見やすくする
 	}
 	searchbox.onkeyup = searchbox.onchange = show
 	if (window['btnclear']) {

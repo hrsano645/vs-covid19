@@ -9,8 +9,7 @@
 window.onload = async function() {
 	// 静岡県版データセット（CSV出力): https://docs.google.com/spreadsheets/d/e/2PACX-1vS92FFvTP6VBPu-ZHnJOYitgzQY0gyKCiOBWJoyLkkV4lIQ4Se6rGxgMVP7pFLOoG4ywi7l43TR0Ou9/pub?gid=1523639335&single=true&output=csv
 
-	//const key = '2PACX-1vS92FFvTP6VBPu-ZHnJOYitgzQY0gyKCiOBWJoyLkkV4lIQ4Se6rGxgMVP7pFLOoG4ywi7l43TR0Ou9'
-	const key = '2PACX-1vSfGKhdX1W5lEMBWxClBDkSa6B3_uqbEAZljOd4lQ4oLMJKa_O0dvhFf3Pf8aEXOr9er-80AYF-NfxF'
+	const key = '2PACX-1vS92FFvTP6VBPu-ZHnJOYitgzQY0gyKCiOBWJoyLkkV4lIQ4Se6rGxgMVP7pFLOoG4ywi7l43TR0Ou9'
 	const sheetgid = '1523639335'
 	const data = await fetchGoogleSpreadSheet(key, sheetgid)
 	shuffle(data)
@@ -26,9 +25,8 @@ window.onload = async function() {
 	}
 	const tags = []
 	for (const d of data) {
-		const keywordElements = d['キーワード'].replace(/、/g, ',').split(',')
-		const tag2 = [ d['分野']]
-		//const tag2 = d['分野'].split(',')
+		//const tag2 = [ d['分野'], d['キーワード'] ]
+		const tag2 = d['分野'].split(',')
 		for (let tag of tag2) { 
 			tag = tag.trim()
 			if (tag == '教育・学習支援')
@@ -37,12 +35,15 @@ window.onload = async function() {
 				tags.push(tag)
 			}
 		}
+		/* ここはまだ試行中のためコメントアウト 
 		//キーワードをカンマ区切りで分割してタグにセット
+		const keywordElements = d['キーワード'].replace(/、/g, ',').split(',')
 		for (const ke of keywordElements) {
 			if (tags.indexOf(ke) == -1) {
 				tags.push(ke)
 			}
-		}	
+		}
+		*/	
 	}
 	tags.sort()
 	for (const tag of tags) {

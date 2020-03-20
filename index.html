@@ -35,13 +35,6 @@ window.onload = async function() {
 				tags.push(tag)
 			}
 		}
-		//キーワードをカンマ区切りで分割してタグにセット まだ試行のためコメントアウト
-		//const keywordElements = d['キーワード'].replace(/、/g, ',').split(',')
-		//for (const ke of keywordElements) {
-		//	if (tags.indexOf(ke) == -1) {
-		//		tags.push(ke)
-		//	}
-		//}
 	}
 	tags.sort()
 	for (const tag of tags) {

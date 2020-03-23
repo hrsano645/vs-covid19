@@ -100,6 +100,7 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 有無: "有"
 */
 // <ruby>${d['http://xmlns.com/foaf/0.1/#name']}<rt>${d['name_yomi']}</rt></ruby>
+			d['詳細']=d['詳細'].replace(/\n/g,'<br>') //[issue:21]詳細列の改行を<br>で表示改善
 			div.innerHTML = setHyperLink(`
 				<h2>${d['サービス名称']}</h2>
 				<div class=description>${d['詳細']}</div>
@@ -126,7 +127,7 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 			}
 			main.appendChild(div)
 		}
-		total.textContent = cnt + "件"
+		total.textContent = cnt + "件表示しています。" //[issue#20]件数の表示を改善して見やすくする
 	}
 	searchbox.onkeyup = searchbox.onchange = show
 	if (window['btnclear']) {
@@ -418,7 +419,7 @@ h2 {
 	<input type=text id=searchbox placeholder="検索する単語をご入力ください"><!--<button id=btnclear>クリア</button>-->
 </div>
 <div id="toptags" class=tags></div>
-<div id="checekboxes"><label><input type=checkbox id=forindivisual>個人向けのみ</label><span id=total></span></div>
+<div id="checekboxes"><span id=total></span><label>　<input type=checkbox id=forindivisual>個人向けのみに絞り込む</label></div>
 <div id="main" class="container"></div>
 
 <div id="src">

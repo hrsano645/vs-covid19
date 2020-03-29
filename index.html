@@ -101,6 +101,14 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 */
 // <ruby>${d['http://xmlns.com/foaf/0.1/#name']}<rt>${d['name_yomi']}</rt></ruby>
 			d['詳細']=d['詳細'].replace(/\n/g,'<br>') //[issue:21]詳細列の改行を<br>で表示改善
+			
+			// [issue:31]終了している情報は終了を明記する
+			let urltag = `<a href="${d['URL']}">アクセスしてみる</a>`
+			let endclass = 'url'
+			if (d["期間備考"].indexOf("終了") !== -1) {
+				urltag = '支援は終了しました'
+				endclass = 'url support-end'
+			}			
 			div.innerHTML = setHyperLink(`
 				<h2>${d['サービス名称']}</h2>
 				<div class=description>${d['詳細']}</div>
@@ -115,7 +123,8 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 				<div class=keyword>${d['キーワード']}</div>
 				<div class=target>${d['対象者']}</div>
 				</div>`) + 
-				`<div class=url><a href="${d['URL']}">アクセスしてみる</a></div>`;
+				
+				`<div class="${endclass}">`+ urltag + `</div>`;
 
 			const SET = { '.type': '分野', '.service': 'サービス分類', '.keyword': 'キーワード', '.target': "対象者" }
 			for (const s in SET) {
@@ -363,6 +372,9 @@ h2 {
 	text-align: center;
 	padding: .5em;
 	margin-bottom: 1em;
+}
+.support-end{
+	background-color: #ABABAB;
 }
 .url > a {
 	display: block;

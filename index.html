@@ -105,7 +105,7 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 			// [issue:31]終了している情報は終了を明記する
 			let urltag = `<a href="${d['URL']}">アクセスしてみる</a>`
 			let endclass = 'url'
-			if (d["期間備考"].indexOf("終了") !== -1) {
+			if (d["期間備考"].indexOf("【提供終了】") !== -1) {
 				urltag = '支援は終了しています'
 				endclass = 'url support-end'
 			}			

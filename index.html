@@ -92,6 +92,7 @@ h2 {
 	padding: 1em;
 	margin: 1em;
 	line-height: 1.8em;
+	word-break: break-all;
 }
 .url_string {
 	word-break: break-all;
@@ -317,19 +318,18 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 				<h2>${d['サービス名称']}</h2>
 				<div class=description>${d['詳細']}</div>
 				<div class=from>提供: ${d['企業等']}</div>
-				<div class=target>対象: ${d['対象者']}</div>
 				<div class=fee>費用等: ${d['無料/有料']}</div>
 				<div class=span>提供期間: ${d['開始日']}〜${d['終了日']} ${d['期間備考']}</div>
 				<div class=id>情報源: ${d['情報源']} (発表日付 ${d['発表日付']})</div>
-
 				<div class=tags>
 				<div class=type>${d['分野']}</div>
 				<div class=service>${d['サービス分類']}</div>
 				<div class=keyword>${d['キーワード']}</div>
-				</div>
-
-				<div class=url><a href=${d['URL']}>アクセスしてみる</a></div>
-			`)
+				<div class=target>${d['対象者']}</div>
+				</div>`) + 
+				
+				`<div class="${endclass}">`+ urltag + `</div>`;
+			
 			const SET = { '.type': '分野', '.service': 'サービス分類', '.keyword': 'キーワード' }
 			for (const s in SET) {
 				const sname = SET[s]

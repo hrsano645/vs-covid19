@@ -8,7 +8,8 @@ const DT = 1000 * 60 * 10 // 10min
 const main = async function() {
   for (;;) {
     if (await makedata.updateData()) {
-      await git.update()
+        console.log('git update dryrun')
+      // await git.update()
       console.log('updated')
     }
     await util.sleep(DT)

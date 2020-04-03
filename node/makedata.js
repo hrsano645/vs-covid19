@@ -7,12 +7,12 @@ const fetchText = async function(url) {
 	return data
 }
 const fetchGoogleSpreadSheetCSV = async function(key) {
-	const csvurl = `https://docs.google.com/spreadsheets/d/e/${key}/pub?gid=0&single=true&output=csv`
+	const csvurl = `https://docs.google.com/spreadsheets/d/e/${key}/pub?gid=1523639335&single=true&output=csv`
   const csv = await fetchText(csvurl)
   return csv
 }
 const makeSupport = async function() {
-  const key = '2PACX-1vSFMNp5HcRNOF5MrAujEUWR1dIoX2mncMEWTbPlVAaJqKWiq831-6gnCyI7n_G8YfPqNQXrfwyVjyHL'
+  const key = '2PACX-1vS92FFvTP6VBPu-ZHnJOYitgzQY0gyKCiOBWJoyLkkV4lIQ4Se6rGxgMVP7pFLOoG4ywi7l43TR0Ou9'
   const fn = 'vscovid19-data'
   const csv = await fetchGoogleSpreadSheetCSV(key)
   let csvold = null

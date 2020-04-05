@@ -25,9 +25,14 @@ const status = async function() {
 }
 const update = async function() {
   await add('.')
-  await commit('update data')
+  await commit('update data') //TODO:2020-04-04:ここは日付をいれたほうがいいと思う
   await push()
 }
+const onlycommit = async function() {
+  await add('.')
+  await commit('update data') //TODO:2020-04-04:ここは日付をいれたほうがいいと思う
+}
+
 const main = async function() {
   console.log(await add('.'))
   console.log(await commit('update'))
@@ -36,4 +41,5 @@ const main = async function() {
 if (require.main === module) {
   main()
 }
+exports.onlycommit = onlycommit
 exports.update = update

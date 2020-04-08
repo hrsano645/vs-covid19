@@ -177,6 +177,8 @@ window.onload = async function() {
 	const data = await (await fetch('vscovid19-data.json')).json()
 	console.log(data)
 	shuffle(data)
+	// 提供終了している支援をリストの末尾に移動
+	moveEndedSupportToEnd(data)
 
 	/*
 	const targets = []
@@ -505,6 +507,30 @@ const setHyperLink = function(str) {
         return '<span class="url_string"><a href="h' + href + '">' + url + '</a></span>';
     }
     return str.replace(reg, regexpMakeLink);
+}
+
+// 提供終了している支援をリストの末尾に移動
+const moveEndedSupportToEnd = function(data) {
+	// 各データを有効なものと終了したものに振り分け
+	var effectiveSupports = [];
+	var endedSupports = [];
+	for (let d of data) {
+		if (d["期間備考"].indexOf("【提供終了】") !== -1) {
+			endedSupports.push(d);
+		} else {
+			effectiveSupports.push(d);
+		}
+	}
+
+	// 有効なものを前方にセット
+	for (let i = 0; i < effectiveSupports.length; i++) {
+		data[i] = effectiveSupports[i];
+	}
+
+	// 終了したものを後方にセット
+	for (let i = 0; i < endedSupports.length; i++) {
+		data[effectiveSupports.length + i] = endedSupports[i];
+	}
 }
 
 </script>

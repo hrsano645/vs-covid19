@@ -263,8 +263,10 @@ window.onload = async function() {
 	}
 
 	// 地域ターゲットを絞る
-	// 地域一覧のjsonファイルを読み込む
+	// 地域一覧を読み込む
 	const local_options = [["all","全域"], ["seibu","西部"], ["chubu","中部"], ["toubu","東部"], ["izu","伊豆"]]
+	// TODO:2020-04-13:ここはjsonで読み込むこと
+	// const local_options = [["all","全域"]] // この後にjsonで各地域名を読み込む
 
 	// 追加する
 	for (const local_option of local_options){
@@ -294,11 +296,11 @@ window.onload = async function() {
 
 		// 地域ターゲットをURLに追加する
 		// 現在洗濯中の地域を取得して、hashに追記する
-		// TODO:2020-04-13: すべてを表現する情報を
+		// TODO:2020-04-13: すべてを表現する情報をallでいいのか決めておく必要あり
+		const selectedlocalname = local_select.selectedOptions[0].text
 		if(local_select.value !== "all"){
-			hash += " " + local_select.selectedOptions[0].text
+			hash += " " + selectedlocalname
 		}
-
 		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
 		let cnt = 0
 		A: for (const d of data) {
@@ -326,6 +328,14 @@ window.onload = async function() {
 				}
 				if (!targetflg)
 					continue A
+			}
+
+			// 地域ターゲットの項目を調べる
+			if(local_select.value !== "all"){
+				const local_target = d['キーワード']
+				if(local_target.indexOf(selectedlocalname) === -1){
+					continue A
+				}
 			}
 			
 			cnt++

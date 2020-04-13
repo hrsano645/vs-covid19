@@ -172,11 +172,12 @@ h2 {
 <script>"use strict"
 
 window.onload = async function() {
-	const key = '2PACX-1vSFMNp5HcRNOF5MrAujEUWR1dIoX2mncMEWTbPlVAaJqKWiq831-6gnCyI7n_G8YfPqNQXrfwyVjyHL'
+	// const key = '2PACX-1vSFMNp5HcRNOF5MrAujEUWR1dIoX2mncMEWTbPlVAaJqKWiq831-6gnCyI7n_G8YfPqNQXrfwyVjyHL'
 	//const data = await fetchGoogleSpreadSheet(key)
 	const data = await (await fetch('vscovid19-data.json')).json()
-	console.log(data)
+	// console.log(data)
 	shuffle(data)
+
 	// 提供終了している支援をリストの末尾に移動
 	moveEndedSupportToEnd(data)
 
@@ -190,6 +191,7 @@ window.onload = async function() {
 	}
 	console.log(targets)
 	*/
+
 	const chktarget = {
 		forindivisual: s => s.indexOf('個人') >= 0 && s.indexOf('個人ではな') == -1,
 		forcompany: s => s.indexOf('企業') >= 0 || s.indexOf('法人') >= 0,
@@ -214,6 +216,8 @@ window.onload = async function() {
 			show()
 		}
 	}
+
+	// タグの追加
 	const tags = []
 	for (const d of data) {
 		//const tag2 = [ d['分野'], d['キーワード'] ]
@@ -235,6 +239,33 @@ window.onload = async function() {
 	addTag('その他')
 	//addTag('テレワーク')
 
+	// issue-27: 地域の分類をプルダウンメニューで追加する
+	const addLocalOption = function(optionname, optionvalue) {
+		// selectにoptionを追加する
+		// optionを動的に追加する機能
+		// 
+		const local_option = create('option')
+		local_option.text = optionname
+		local_option.value = optionvalue
+
+		// id:local_selectのselectタグにoptinoを追加
+		local_select.appendChild(local_option)
+
+		local_select.onchange = function() {
+			show()
+		}
+
+	}
+
+	// 地域ターゲットを絞る
+	// 地域一覧のjsonファイルを読み込む
+	const local_options = [["all","全域"], ["seibu","西部"], ["chubu","中部"], ["toubu","東部"], ["izu","伊豆"]]
+
+	// 追加する
+	for (const local_option of local_options){
+		addLocalOption(local_option[1], local_option[0])
+	}
+
 	const items = []
 	const show = function() {
 		const key = searchbox.value
@@ -255,6 +286,14 @@ window.onload = async function() {
 		}
 		if (allflg)
 			hash = key
+
+		// 地域ターゲットをURLに追加する
+		// 現在洗濯中の地域を取得して、hashに追記する
+		// TODO:2020-04-13: すべてを表現する情報を
+		if(local_select.value !== "all"){
+			hash += " " + local_select.selectedOptions[0].text
+		}
+
 		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
 		let cnt = 0
 		A: for (const d of data) {
@@ -501,6 +540,8 @@ const shuffle = function(array) {
 	}
 }
 
+// 静岡版の追加関数
+
 const setHyperLink = function(str) {
 	var reg = /((h?)(ttps?:\/\/[a-zA-Z0-9.\-_@:/~?%&;=+#',()*!]+))/g; // ']))/;
     var regexpMakeLink = function(all, url, h, href) {
@@ -551,6 +592,13 @@ const moveEndedSupportToEnd = function(data) {
 	<label><input type=checkbox id=fororgan>機関</label>
 	<label><input type=checkbox id=forother>その他</label>
 </div>
+
+<!-- 地域分けを検索フォームに追加 -->
+<div class="search_select">地域:
+	<select name="local_select" id="local_select">
+	</select>
+</div>
+
 <div id="main"></div>
 
 <div id='share'>

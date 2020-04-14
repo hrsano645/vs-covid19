@@ -262,15 +262,16 @@ window.onload = async function() {
 
 	}
 
-	// 地域ターゲットを絞る
+	// 地域一覧の設定
+	const localAllWord = [["all","全域"]]
 	// 地域一覧を読み込む
-	const local_options = [["all","全域"], ["seibu","西部"], ["chubu","中部"], ["toubu","東部"], ["izu","伊豆"]]
-	// TODO:2020-04-13:ここはjsonで読み込むこと
-	// const local_options = [["all","全域"]] // この後にjsonで各地域名を読み込む
+	const loadedSearchWords = await (await fetch('search_word_list.json')).json()
+	console.log(loadedSearchWords["localWordList"])
+	const searchLocalWords = localAllWord.concat(loadedSearchWords["localWordList"])
 
 	// 追加する
-	for (const local_option of local_options){
-		addLocalOption(local_option[1], local_option[0])
+	for (const localword of searchLocalWords){
+		addLocalOption(localword[1], localword[0])
 	}
 
 	const items = []

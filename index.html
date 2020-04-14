@@ -244,32 +244,24 @@ window.onload = async function() {
 	addTag('その他')
 	//addTag('テレワーク')
 
-	// issue-27: 地域の分類をプルダウンメニューで追加する
+	// [issue:27]静岡版向け:地域の分類をプルダウンメニューに追加する
 	const addLocalOption = function(optionname, optionvalue) {
-		// selectにoptionを追加する
-		// optionを動的に追加する機能
-		// 
-		const local_option = create('option')
-		local_option.text = optionname
-		local_option.value = optionvalue
+		const localOption = create('option')
+		localOption.text = optionname
+		localOption.value = optionvalue
 
-		// id:local_selectのselectタグにoptinoを追加
-		local_select.appendChild(local_option)
-
+		local_select.appendChild(localOption)
 		local_select.onchange = function() {
 			show()
 		}
 
 	}
 
-	// 地域一覧の設定
+	// [issue:27]静岡版向け:地域一覧のプルダウメニューを作成
 	const localAllWord = [["all","全域"]]
-	// 地域一覧を読み込む
+	// 地域一覧をjsonから読み込む
 	const loadedSearchWords = await (await fetch('search_word_list.json')).json()
-	console.log(loadedSearchWords["localWordList"])
 	const searchLocalWords = localAllWord.concat(loadedSearchWords["localWordList"])
-
-	// 追加する
 	for (const localword of searchLocalWords){
 		addLocalOption(localword[1], localword[0])
 	}
@@ -295,12 +287,12 @@ window.onload = async function() {
 		if (allflg)
 			hash = key
 
-		// 地域ターゲットをURLに追加する
-		// 現在洗濯中の地域を取得して、hashに追記する
-		// TODO:2020-04-13: すべてを表現する情報をallでいいのか決めておく必要あり
-		const selectedlocalname = local_select.selectedOptions[0].text
+		// [issue:27]静岡版向け:地域ターゲットをURLに追加する
+		// 選択中の地域を取得して、hashに追記する
+		const selectedLocalName = local_select.selectedOptions[0].text
 		if(local_select.value !== "all"){
-			hash += " " + selectedlocalname
+			// all（全域）はすべての地域とする
+			hash += " " + selectedLocalName
 		}
 		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
 		let cnt = 0
@@ -331,10 +323,10 @@ window.onload = async function() {
 					continue A
 			}
 
-			// 地域ターゲットの項目を調べる
+			// [issue:27]静岡版向け:選択中の地域名でフィルター
 			if(local_select.value !== "all"){
-				const local_target = d['キーワード']
-				if(local_target.indexOf(selectedlocalname) === -1){
+				const localTarget = d['キーワード']
+				if(localTarget.indexOf(selectedLocalName) === -1){
 					continue A
 				}
 			}

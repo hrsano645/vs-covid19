@@ -261,7 +261,10 @@ window.onload = async function() {
 	const localAllWord = [["all","指定なし"]]
 	// 地域一覧をjsonから読み込む
 	const loadedSearchWords = await (await fetch('search_word_list.json')).json()
-	const searchLocalWords = localAllWord.concat(loadedSearchWords["localWordList"])
+	// 一覧をoptionタグとして登録
+	const loadedLocalSearchWords = loadedSearchWords["localWordList"]
+	const searchLocalWords = localAllWord.concat(loadedLocalSearchWords)
+	// const localCnt = 0
 	for (const localword of searchLocalWords){
 		addLocalOption(localword[1], localword[0])
 	}
@@ -287,12 +290,23 @@ window.onload = async function() {
 		if (allflg)
 			hash = key
 
-		// [issue:27]静岡版向け:地域ターゲットをURLに追加する
+
+		// TODO:2020-04-16:URLアクセス時に地域名が入ってる場合に、プルダウンメニューもその地域にする必要がある
+		// [issue:27]静岡版向け:
+		// 地域ターゲットをURLに追加する
 		// 選択中の地域を取得して、hashに追記する
 		const selectedLocalName = local_select.selectedOptions[0].text
+		let excudeLocalNames = []
 		if(local_select.value !== "all"){
-			// all（全域）はすべての地域とする
 			hash += " " + selectedLocalName
+			// 地域指定の場合は、指定以外の除外地域の配列を作る
+			// 指定地域+指定しない地域に該当しない（全国,地域情報なし）の一覧を生成するために
+			excudeLocalNames = loadedLocalSearchWords.filter(
+				function(wordAndValue){
+					return selectedLocalName !== wordAndValue[1]
+				}
+			)
+			// console.log(excudeLocalNames)
 		}
 		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
 		let cnt = 0
@@ -324,10 +338,18 @@ window.onload = async function() {
 			}
 
 			// [issue:27]静岡版向け:選択中の地域名でフィルター
+			// もし指定なし対象ではない場合
 			if(local_select.value !== "all"){
+				// console.log(excudeLocalNames)
+				// キーワードで、該当する
 				const localTarget = d['キーワード']
-				if(localTarget.indexOf(selectedLocalName) === -1){
-					continue A
+				// console.log(localTarget)
+				// 除外地域一覧を使って除外する
+				for(const excudeLocalName of excudeLocalNames){
+					if(localTarget.indexOf(excudeLocalName[1]) !== -1){
+						// console.log("not append")
+						continue A
+					}
 				}
 			}
 			

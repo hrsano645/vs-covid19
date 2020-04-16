@@ -258,7 +258,7 @@ window.onload = async function() {
 	}
 
 	// [issue:27]静岡版向け:地域一覧のプルダウメニューを作成
-	const localAllWord = [["all","全域"]]
+	const localAllWord = [["all","指定なし"]]
 	// 地域一覧をjsonから読み込む
 	const loadedSearchWords = await (await fetch('search_word_list.json')).json()
 	const searchLocalWords = localAllWord.concat(loadedSearchWords["localWordList"])

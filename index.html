@@ -290,17 +290,23 @@ window.onload = async function() {
 		if (allflg)
 			hash = key
 
-
-		// TODO:2020-04-16:URLアクセス時に地域名が入ってる場合に、プルダウンメニューもその地域にする必要がある
-		// [issue:27]静岡版向け:
-		// 地域ターゲットをURLに追加する
-		// 選択中の地域を取得して、hashに追記する
+		// [issue:27]静岡版向け:地域ターゲットをURLに追加する
 		const selectedLocalName = local_select.selectedOptions[0].text
-		let excudeLocalNames = []
+		// TODO:2020-04-16:URLアクセス時に地域名が入ってる場合に、プルダウンメニューもその地域にする必要がある
+		// 検索キーワード無いから地域名を除去する
+		// URLに地域名がある場合（後ろについている場合）は、プルダウンメニューを操作する
+		// ここにコードの追加を行うこと
+
+		// プルダウンメニューが地域指定している場合はURLに地域名を追加
 		if(local_select.value !== "all"){
 			hash += " " + selectedLocalName
+		}
+		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
+		
+		// [issue:27]静岡版向け:地域指定をしてそれ以外の地域情報を除外する
+		let excudeLocalNames = []
+		if(local_select.value !== "all"){
 			// 地域指定の場合は、指定以外の除外地域の配列を作る
-			// 指定地域+指定しない地域に該当しない（全国,地域情報なし）の一覧を生成するために
 			excudeLocalNames = loadedLocalSearchWords.filter(
 				function(wordAndValue){
 					return selectedLocalName !== wordAndValue[1]
@@ -308,7 +314,6 @@ window.onload = async function() {
 			)
 			// console.log(excudeLocalNames)
 		}
-		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
 		let cnt = 0
 		A: for (const d of data) {
 			if (key) {

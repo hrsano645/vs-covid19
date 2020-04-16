@@ -292,10 +292,6 @@ window.onload = async function() {
 
 		// [issue:27]静岡版向け:地域ターゲットをURLに追加する
 		const selectedLocalName = local_select.selectedOptions[0].text
-		// TODO:2020-04-16:URLアクセス時に地域名が入ってる場合に、プルダウンメニューもその地域にする必要がある
-		// 検索キーワード無いから地域名を除去する
-		// URLに地域名がある場合（後ろについている場合）は、プルダウンメニューを操作する
-		// ここにコードの追加を行うこと
 
 		// プルダウンメニューが地域指定している場合はURLに地域名を追加
 		if(local_select.value !== "all"){
@@ -431,6 +427,7 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 		}
 	}
 
+	// URLにカテゴリチェックボックスの情報があればチェックボックスに反映する
 	let chkflg = false
 	if (document.location.hash.length > 1) {
 		let key = decodeURIComponent(document.location.hash.substring(1))
@@ -449,6 +446,12 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 		const chkbox = document.getElementById(chk)
 		chkbox.onchange = show
 	}
+
+	// hashに地域指定がある場合の処理
+	// TODO:2020-04-16:URLアクセス時に地域名が入ってる場合に、プルダウンメニューもその地域にする必要がある
+	// 検索キーワード無いから地域名を除去する:置き換えで良いと思う
+	// URLに地域名がある場合（後ろについている場合）は、プルダウンメニューを操作する
+	// ここにコードの追加を行うこと
 
 	show()
 }

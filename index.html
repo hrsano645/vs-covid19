@@ -450,23 +450,6 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 		const chkbox = document.getElementById(chk)
 		chkbox.onchange = show
 	}
-
-	// hashに地域指定がある場合の処理
-	// TODO:2020-04-16:URLアクセス時に地域名が入ってる場合に、プルダウンメニューもその地域にする必要がある
-	// 検索キーワード無いから地域名を除去する:置き換えで良いと思う
-	// URLに地域名がある場合（後ろについている場合）は、プルダウンメニューを操作する
-	// ここにコードの追加を行うこと
-
-	if (document.location.hash.length > 1) {
-		console.log(decodeURIComponent(document.location.hash.substring(1)))
-		// let key = decodeURIComponent(document.location.hash.substring(1))
-
-
-
-		// searchbox.value = key
-	}
-
-
 	show()
 }
 // util

@@ -464,10 +464,21 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 		}
 	}
 
-	// URLにカテゴリチェックボックスの情報があればチェックボックスに反映する
 	let chkflg = false
 	if (document.location.hash.length > 1) {
 		let key = decodeURIComponent(document.location.hash.substring(1))
+		// [issue-27]:静岡県版:
+		for (const localOption of local_select.options) {
+			const localOptionWord = localOption.text
+			
+			if (key.indexOf(" " + localOptionWord) !== -1) {
+				key = key.replace(" " + localOptionWord, "")
+				localOption.selected = true
+			}
+		}
+		// 地域情報を除去してkeyに戻す
+		searchbox.value = key
+
 		for (const chk in chktarget) {
 			const chkbox = document.getElementById(chk)
 			const lbl = chkbox.parentElement.textContent
@@ -478,6 +489,7 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 			}
 		}
 		searchbox.value = key
+
 	}
 	for (const chk in chktarget) {
 		const chkbox = document.getElementById(chk)
@@ -489,6 +501,16 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 	// 検索キーワード無いから地域名を除去する:置き換えで良いと思う
 	// URLに地域名がある場合（後ろについている場合）は、プルダウンメニューを操作する
 	// ここにコードの追加を行うこと
+
+	if (document.location.hash.length > 1) {
+		console.log(decodeURIComponent(document.location.hash.substring(1)))
+		// let key = decodeURIComponent(document.location.hash.substring(1))
+
+
+
+		// searchbox.value = key
+	}
+
 
 	show()
 }

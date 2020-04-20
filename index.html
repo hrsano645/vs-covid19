@@ -263,8 +263,11 @@ window.onload = async function() {
 	const loadedSearchWords = await (await fetch('search_word_list.json')).json()
 	// 一覧をoptionタグとして登録
 	const loadedLocalSearchWords = loadedSearchWords["localWordList"]
-	const searchLocalWords = localAllWord.concat(loadedLocalSearchWords)
-	// const localCnt = 0
+	let searchLocalWords = localAllWord.concat(loadedLocalSearchWords)
+	// 地域不明を入れる
+	const unknownLocalWord = [["unknown","地域不明"]]
+	searchLocalWords = searchLocalWords.concat(unknownLocalWord)
+	// Optionタグを追加
 	for (const localword of searchLocalWords){
 		addLocalOption(localword[1], localword[0])
 	}
@@ -299,17 +302,48 @@ window.onload = async function() {
 		}
 		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
 		
+		// TODO:2020/04/20:地域は3つの大枠がある
+		/*ここで言う地域は支援対象の地域とする
+
+		- 地域指定
+		- 全国
+		- 地域不明（情報がない）
+
+		そのときにそれぞれの意味は
+		- 地域指定:search_word_listにある地域
+		- 全国: 全国もsearch_word_listに入れても良い
+		- 地域不明（情報がない）: search_word_listに入れる
+
+		プルダウンメニューでは
+		- 指定なし
+		- 地域（全国,各地域）
+		- 地域不明
+
+		となって、意味はこうなる
+
+		- 指定なし: すべての一覧
+		- 地域（全国,各地域）: キーワードにある各地域。全国もこの中
+		- 地域不明: キーワードに地域指定がないもの
+
+		なので、地域はキーワードに当たるもの。地域に当たらないものはキーワードに当たらないものとしてフィルターすればいい
+		地域指定のオプションで指定したワードでキーワードを検索する。
+
+		なのでコード上では、指定なし=すべて, 地域未定=地域リストで当たらないものをすべて にしておけばいい
+
+		静岡版
+
+		*/
 		// [issue:27]静岡版向け:地域指定をしてそれ以外の地域情報を除外する
-		let excudeLocalNames = []
-		if(local_select.value !== "all"){
-			// 地域指定の場合は、指定以外の除外地域の配列を作る
-			excudeLocalNames = loadedLocalSearchWords.filter(
-				function(wordAndValue){
-					return selectedLocalName !== wordAndValue[1]
-				}
-			)
-			// console.log(excudeLocalNames)
-		}
+		// let excudeLocalNames = []
+		// if(local_select.value !== "all"){
+		// 	// 地域指定の場合は、指定以外の除外地域の配列を作る
+		// 	excudeLocalNames = loadedLocalSearchWords.filter(
+		// 		function(wordAndValue){
+		// 			return selectedLocalName !== wordAndValue[1]
+		// 		}
+		// 	)
+		// 	// console.log(excudeLocalNames)
+		// }
 		let cnt = 0
 		A: for (const d of data) {
 			if (key) {
@@ -339,21 +373,24 @@ window.onload = async function() {
 			}
 
 			// [issue:27]静岡版向け:選択中の地域名でフィルター
-			// もし指定なし対象ではない場合
+			const localTarget = d['キーワード']
+			// 指定なしはすべて表示: 指定なしではなかった場合
 			if(local_select.value !== "all"){
-				// console.log(excudeLocalNames)
-				// キーワードで、該当する
-				const localTarget = d['キーワード']
-				// console.log(localTarget)
-				// 除外地域一覧を使って除外する
-				for(const excudeLocalName of excudeLocalNames){
-					if(localTarget.indexOf(excudeLocalName[1]) !== -1){
-						// console.log("not append")
+				if(local_select.value === "unknown"){
+					// 指定未定を選んだときは、地域リストに存在しない地域の情報を載せる
+					const hasLocalNames = function (elem){
+						return localTarget.indexOf(elem[1]) > -1
+					}
+					if(loadedLocalSearchWords.some(hasLocalNames)){
+						continue A
+					}
+				} else {
+					// 地域指定した場合は指定外の地域の情報を乗せる
+					if(localTarget.indexOf(selectedLocalName) === -1){
 						continue A
 					}
 				}
 			}
-			
 			cnt++
 			const div = create('div')
 			div.className = "item"

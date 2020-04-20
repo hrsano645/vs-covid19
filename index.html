@@ -424,7 +424,7 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 	let chkflg = false
 	if (document.location.hash.length > 1) {
 		let key = decodeURIComponent(document.location.hash.substring(1))
-		// [issue-27]:静岡県版:キーワード付きURLでアクセスした場合に検索キーワードから地域を消してプルダウンメニューを選択する
+		// [issue:27]静岡版向け:キーワード付きURLでアクセスした場合に検索キーワードから地域を消してプルダウンメニューを選択する
 		for (const localOption of local_select.options) {
 			const localOptionWord = localOption.text
 			if (key.indexOf(" " + localOptionWord) !== -1) {

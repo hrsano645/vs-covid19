@@ -295,55 +295,12 @@ window.onload = async function() {
 
 		// [issue:27]静岡版向け:地域ターゲットをURLに追加する
 		const selectedLocalName = local_select.selectedOptions[0].text
-
 		// プルダウンメニューが地域指定している場合はURLに地域名を追加
 		if(local_select.value !== "all"){
 			hash += " " + selectedLocalName
 		}
 		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
-		
-		// TODO:2020/04/20:地域は3つの大枠がある
-		/*ここで言う地域は支援対象の地域とする
-
-		- 地域指定
-		- 全国
-		- 地域不明（情報がない）
-
-		そのときにそれぞれの意味は
-		- 地域指定:search_word_listにある地域
-		- 全国: 全国もsearch_word_listに入れても良い
-		- 地域不明（情報がない）: search_word_listに入れる
-
-		プルダウンメニューでは
-		- 指定なし
-		- 地域（全国,各地域）
-		- 地域不明
-
-		となって、意味はこうなる
-
-		- 指定なし: すべての一覧
-		- 地域（全国,各地域）: キーワードにある各地域。全国もこの中
-		- 地域不明: キーワードに地域指定がないもの
-
-		なので、地域はキーワードに当たるもの。地域に当たらないものはキーワードに当たらないものとしてフィルターすればいい
-		地域指定のオプションで指定したワードでキーワードを検索する。
-
-		なのでコード上では、指定なし=すべて, 地域未定=地域リストで当たらないものをすべて にしておけばいい
-
-		静岡版
-
-		*/
-		// [issue:27]静岡版向け:地域指定をしてそれ以外の地域情報を除外する
-		// let excudeLocalNames = []
-		// if(local_select.value !== "all"){
-		// 	// 地域指定の場合は、指定以外の除外地域の配列を作る
-		// 	excudeLocalNames = loadedLocalSearchWords.filter(
-		// 		function(wordAndValue){
-		// 			return selectedLocalName !== wordAndValue[1]
-		// 		}
-		// 	)
-		// 	// console.log(excudeLocalNames)
-		// }
+	
 		let cnt = 0
 		A: for (const d of data) {
 			if (key) {
@@ -467,16 +424,14 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 	let chkflg = false
 	if (document.location.hash.length > 1) {
 		let key = decodeURIComponent(document.location.hash.substring(1))
-		// [issue-27]:静岡県版:
+		// [issue-27]:静岡県版:キーワード付きURLでアクセスした場合に検索キーワードから地域を消してプルダウンメニューを選択する
 		for (const localOption of local_select.options) {
 			const localOptionWord = localOption.text
-			
 			if (key.indexOf(" " + localOptionWord) !== -1) {
 				key = key.replace(" " + localOptionWord, "")
 				localOption.selected = true
 			}
 		}
-		// 地域情報を除去してkeyに戻す
 		searchbox.value = key
 
 		for (const chk in chktarget) {

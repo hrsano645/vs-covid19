@@ -69,6 +69,11 @@ input[type="checkbox"] {
 label {
 	display: inline-block;
 }
+.search_select{
+	text-align: center;
+	margin:.6em;
+    font-size: 80%;
+}
 #total {
 	text-align: center;
 	font-size: 80%;
@@ -172,11 +177,12 @@ h2 {
 <script>"use strict"
 
 window.onload = async function() {
-	const key = '2PACX-1vSFMNp5HcRNOF5MrAujEUWR1dIoX2mncMEWTbPlVAaJqKWiq831-6gnCyI7n_G8YfPqNQXrfwyVjyHL'
+	// const key = '2PACX-1vSFMNp5HcRNOF5MrAujEUWR1dIoX2mncMEWTbPlVAaJqKWiq831-6gnCyI7n_G8YfPqNQXrfwyVjyHL'
 	//const data = await fetchGoogleSpreadSheet(key)
 	const data = await (await fetch('vscovid19-data.json')).json()
-	console.log(data)
+	// console.log(data)
 	shuffle(data)
+
 	// 提供終了している支援をリストの末尾に移動
 	moveEndedSupportToEnd(data)
 
@@ -190,6 +196,7 @@ window.onload = async function() {
 	}
 	console.log(targets)
 	*/
+
 	const chktarget = {
 		forindivisual: s => s.indexOf('個人') >= 0 && s.indexOf('個人ではな') == -1,
 		forcompany: s => s.indexOf('企業') >= 0 || s.indexOf('法人') >= 0,
@@ -214,6 +221,8 @@ window.onload = async function() {
 			show()
 		}
 	}
+
+	// タグの追加
 	const tags = []
 	for (const d of data) {
 		//const tag2 = [ d['分野'], d['キーワード'] ]
@@ -235,6 +244,34 @@ window.onload = async function() {
 	addTag('その他')
 	//addTag('テレワーク')
 
+	// [issue:27]静岡版向け:地域の分類をプルダウンメニューに追加する
+	const addLocalOption = function(optionname, optionvalue) {
+		const localOption = create('option')
+		localOption.text = optionname
+		localOption.value = optionvalue
+
+		local_select.appendChild(localOption)
+		local_select.onchange = function() {
+			show()
+		}
+
+	}
+
+	// [issue:27]静岡版向け:地域一覧のプルダウメニューを作成
+	const localAllWord = [["all","指定なし"]]
+	// 地域一覧をjsonから読み込む
+	const loadedSearchWords = await (await fetch('search_word_list.json')).json()
+	// 一覧をoptionタグとして登録
+	const loadedLocalSearchWords = loadedSearchWords["localWordList"]
+	let searchLocalWords = localAllWord.concat(loadedLocalSearchWords)
+	// 地域不明を入れる
+	const unknownLocalWord = [["unknown","地域不明"]]
+	searchLocalWords = searchLocalWords.concat(unknownLocalWord)
+	// Optionタグを追加
+	for (const localword of searchLocalWords){
+		addLocalOption(localword[1], localword[0])
+	}
+
 	const items = []
 	const show = function() {
 		const key = searchbox.value
@@ -255,7 +292,15 @@ window.onload = async function() {
 		}
 		if (allflg)
 			hash = key
+
+		// [issue:27]静岡版向け:地域ターゲットをURLに追加する
+		const selectedLocalName = local_select.selectedOptions[0].text
+		// プルダウンメニューが地域指定している場合はURLに地域名を追加
+		if(local_select.value !== "all"){
+			hash += " " + selectedLocalName
+		}
 		document.location.hash = hash.length > 0 ? '#' + encodeURIComponent(hash) : ""
+	
 		let cnt = 0
 		A: for (const d of data) {
 			if (key) {
@@ -283,7 +328,26 @@ window.onload = async function() {
 				if (!targetflg)
 					continue A
 			}
-			
+
+			// [issue:27]静岡版向け:選択中の地域名でフィルター
+			const localTarget = d['キーワード']
+			// 指定なしはすべて表示: 指定なしではなかった場合
+			if(local_select.value !== "all"){
+				if(local_select.value === "unknown"){
+					// 指定未定を選んだときは、地域リストに存在しない地域の情報を載せる
+					const hasLocalNames = function (elem){
+						return localTarget.indexOf(elem[1]) > -1
+					}
+					if(loadedLocalSearchWords.some(hasLocalNames)){
+						continue A
+					}
+				} else {
+					// 地域指定した場合は指定外の地域の情報を乗せる
+					if(localTarget.indexOf(selectedLocalName) === -1){
+						continue A
+					}
+				}
+			}
 			cnt++
 			const div = create('div')
 			div.className = "item"
@@ -360,6 +424,16 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 	let chkflg = false
 	if (document.location.hash.length > 1) {
 		let key = decodeURIComponent(document.location.hash.substring(1))
+		// [issue:27]静岡版向け:キーワード付きURLでアクセスした場合に検索キーワードから地域を消してプルダウンメニューを選択する
+		for (const localOption of local_select.options) {
+			const localOptionWord = localOption.text
+			if (key.indexOf(" " + localOptionWord) !== -1) {
+				key = key.replace(" " + localOptionWord, "")
+				localOption.selected = true
+			}
+		}
+		searchbox.value = key
+
 		for (const chk in chktarget) {
 			const chkbox = document.getElementById(chk)
 			const lbl = chkbox.parentElement.textContent
@@ -370,12 +444,12 @@ URL: "https://www.shikumi.co.jp/springin-fes-2020-spring/"
 			}
 		}
 		searchbox.value = key
+
 	}
 	for (const chk in chktarget) {
 		const chkbox = document.getElementById(chk)
 		chkbox.onchange = show
 	}
-
 	show()
 }
 // util
@@ -501,6 +575,8 @@ const shuffle = function(array) {
 	}
 }
 
+// 静岡版の追加関数
+
 const setHyperLink = function(str) {
 	var reg = /((h?)(ttps?:\/\/[a-zA-Z0-9.\-_@:/~?%&;=+#',()*!]+))/g; // ']))/;
     var regexpMakeLink = function(all, url, h, href) {
@@ -551,6 +627,13 @@ const moveEndedSupportToEnd = function(data) {
 	<label><input type=checkbox id=fororgan>機関</label>
 	<label><input type=checkbox id=forother>その他</label>
 </div>
+
+<!-- 地域分けを検索フォームに追加 -->
+<div class="search_select">地域:
+	<select name="local_select" id="local_select">
+	</select>
+</div>
+
 <div id="main"></div>
 
 <div id='share'>
